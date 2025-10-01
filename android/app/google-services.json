@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260603966127",
+    "project_id": "helpmate-d5d6d",
+    "storage_bucket": "helpmate-d5d6d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260603966127:android:4da96e0fcddf1db66d1a5a",
+        "android_client_info": {
+          "package_name": "com.example.help_mate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9iX1LNLcE9Fiv5fZ1LVxHqyXHM9V5RP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
