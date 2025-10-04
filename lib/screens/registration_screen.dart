@@ -21,6 +21,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String password = '';
   String bloodType = '';
   String role = 'donor';
+  String phone = '';
   String locationString = 'Detecting location...';
 
   double? latitude;
@@ -34,11 +35,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _determinePosition();
   }
 
-  // Get current location and convert to address
   Future<void> _determinePosition() async {
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) return;
+      if (!await Geolocator.isLocationServiceEnabled()) return;
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -49,13 +48,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-
-
-      print("Lat: ${position.latitude}, Lng: ${position.longitude}"); // debug print
-
-      latitude = position.latitude;
-      longitude = position.longitude;
-
 
       latitude = position.latitude;
       longitude = position.longitude;
@@ -79,28 +71,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('HelpMate Register')),
+      appBar: AppBar(title: const Text('HelpMate Register')),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Name'),
                 onChanged: (val) => name = val.trim(),
               ),
               TextField(
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 onChanged: (val) => email = val.trim(),
               ),
               TextField(
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 onChanged: (val) => password = val.trim(),
               ),
               TextField(
-                decoration: InputDecoration(labelText: 'Blood Type (e.g., A+)'),
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+                keyboardType: TextInputType.phone,
+                onChanged: (val) => phone = val.trim(),
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Blood Type (e.g., A+)'),
                 onChanged: (val) => bloodType = val.trim(),
               ),
               DropdownButtonFormField<String>(
@@ -111,19 +108,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onChanged: (val) {
                   if (val != null) role = val;
                 },
-                decoration: InputDecoration(labelText: 'Role'),
+                decoration: const InputDecoration(labelText: 'Role'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text('Location: $locationString'),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 child: loading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text('Register'),
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Register'),
                 onPressed: () async {
                   if (latitude == null || longitude == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Could not detect location.')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Could not detect location.')));
+                    return;
+                  }
+
+                  if (phone.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please enter a phone number.')));
                     return;
                   }
 
@@ -140,6 +143,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         'email': email,
                         'bloodType': bloodType,
                         'role': role,
+                        'phone': phone,
                         'location': locationString,
                         'latitude': latitude,
                         'longitude': longitude,
@@ -148,7 +152,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
                     );
                   } on FirebaseAuthException catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
