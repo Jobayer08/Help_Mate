@@ -39,6 +39,7 @@ dependencies:
   geolocator: ^9.0.2
   geocoding: ^2.0.5
   url_launcher: ^6.1.10
+  flutter_launcher_icons: ^0.13.1
 
 
 
@@ -98,3 +99,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "assets/icon.png"
+    adaptive_icon_background: "#D9302F"
+    adaptive_icon_foreground: "assets/icon.png"
+

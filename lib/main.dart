@@ -21,23 +21,34 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HelpMate',
       theme: ThemeData(primarySwatch: Colors.red),
+      debugShowCheckedModeBanner: false,
       home: const AuthWrapper(),
     );
   }
 }
 
-// Wrapper to decide which screen to show
+// ✅ AuthWrapper now listens to FirebaseAuth changes in real-time
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      return const HomeScreen(); // Already logged in
-    } else {
-      return const LoginScreen(); // Not logged in
-    }
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(), // listens for login/logout
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // while checking login state
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasData) {
+          // user is logged in
+          return const HomeScreen();
+        } else {
+          // user is not logged in
+          return const LoginScreen();
+        }
+      },
+    );
   }
 }
